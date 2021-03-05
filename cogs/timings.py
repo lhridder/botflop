@@ -94,7 +94,7 @@ class Timings(commands.Cog):
                 timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
                 if timing_cost > 300:
                     embed_var.add_field(name="❌ Timingcost",
-                                        value=f"Your timingcost is {timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).")
+                                        value=f"Your timingcost is {timing_cost}. Your cpu is overloaded and/or slow.")
             except KeyError as key:
                 logging.info("Missing: " + str(key))
 
@@ -102,32 +102,13 @@ class Timings(commands.Cog):
                 jvm_version = request["timingsMaster"]["system"]["jvmversion"]
                 if jvm_version.startswith("1.8.") or jvm_version.startswith("9.") or jvm_version.startswith("10."):
                     embed_var.add_field(name="❌ Java Version",
-                                        value=f"You are using Java {jvm_version}. Update to [Java 11](https://adoptopenjdk.net/installation.html).")
+                                        value=f"You are using Java {jvm_version}. Ask your host to update your java")
             except KeyError as key:
                 logging.info("Missing: " + str(key))
 
             try:
                 flags = request["timingsMaster"]["system"]["flags"]
-                if "-XX:+UseZGC" in flags:
-                    jvm_version = request["timingsMaster"]["system"]["jvmversion"]
-                    java_version = jvm_version.split(".")[0]
-                    if int(java_version) < 14:
-                        embed_var.add_field(name="❌ Java " + java_version,
-                                            value="ZGC should only be used on Java 15.")
-                    if "-Xmx" in flags:
-                        max_mem = 0
-                        flaglist = flags.split(" ")
-                        for flag in flaglist:
-                            if flag.startswith("-Xmx"):
-                                max_mem = flag.split("-Xmx")[1]
-                                max_mem = max_mem.replace("G", "000")
-                                max_mem = max_mem.replace("M", "")
-                                max_mem = max_mem.replace("g", "000")
-                                max_mem = max_mem.replace("m", "")
-                                if int(max_mem) < 10000:
-                                    embed_var.add_field(name="❌ Low Memory",
-                                                        value="ZGC is only good with a lot of memory.")
-                elif "-Daikars.new.flags=true" in flags:
+                if "-Daikars.new.flags=true" in flags:
                     if "-XX:+PerfDisableSharedMem" not in flags:
                         embed_var.add_field(name="❌ Outdated Flags",
                                             value="Add `-XX:+PerfDisableSharedMem` to flags.")
@@ -148,9 +129,9 @@ class Timings(commands.Cog):
                                 max_mem = max_mem.replace("M", "")
                                 max_mem = max_mem.replace("g", "000")
                                 max_mem = max_mem.replace("m", "")
-                        if int(max_mem) < 5400:
+                        if int(max_mem) < 4000:
                             embed_var.add_field(name="❌ Low Memory",
-                                                value="Allocate at least 6-10GB of ram to your server if you can afford it.")
+                                                value="Allocate at least 6-8GB of ram to your server if you can afford it.")
                         index = 0
                         max_online_players = 0
                         while index < len(request["timingsMaster"]["data"]):
@@ -161,39 +142,31 @@ class Timings(commands.Cog):
                             players = (player_ticks / timed_ticks)
                             max_online_players = max(players, max_online_players)
                             index = index + 1
-                        if 1000 * max_online_players / int(max_mem) > 6 and int(max_mem) < 10000:
-                            embed_var.add_field(name="❌ Low memory",
-                                                value="You should be using more RAM with this many players.")
-                        if "-Xms" in flags:
-                            min_mem = 0
-                            flaglist = flags.split(" ")
-                            for flag in flaglist:
-                                if flag.startswith("-Xms"):
-                                    min_mem = flag.split("-Xms")[1]
-                                    min_mem = min_mem.replace("G", "000")
-                                    min_mem = min_mem.replace("M", "")
-                                    min_mem = min_mem.replace("g", "000")
-                                    min_mem = min_mem.replace("m", "")
-                            if min_mem != max_mem:
-                                embed_var.add_field(name="❌ Aikar's Flags",
-                                                    value="Your Xmx and Xms values should be equal when using Aikar's flags.")
                 elif "-Dusing.aikars.flags=mcflags.emc.gs" in flags:
                     embed_var.add_field(name="❌ Outdated Flags",
-                                        value="Update [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
+                                        value="Ask your host to update your aikar flags.")
                 else:
-                    embed_var.add_field(name="❌ Aikar's Flags",
+                    if "-Xmx" in flags:
+                        max_mem = 0
+                        flaglist = flags.split(" ")
+                        for flag in flaglist:
+                            if flag.startswith("-Xmx"):
+                                max_mem = flag.split("-Xmx")[1]
+                                max_mem = max_mem.replace("G", "000")
+                                max_mem = max_mem.replace("M", "")
+                                max_mem = max_mem.replace("g", "000")
+                                max_mem = max_mem.replace("m", "")
+                        if int(max_mem) > 4000:
+                            embed_var.add_field(name="❌ Aikar's Flags",
                                         value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
             except KeyError as key:
                 logging.info("Missing: " + str(key))
 
             try:
                 cpu = int(request["timingsMaster"]["system"]["cpu"])
-                if cpu == 1:
-                    embed_var.add_field(name="❌ Threads",
-                                        value=f"You have only {cpu} thread. Find a [better host](https://www.birdflop.com).")
                 if cpu == 2:
                     embed_var.add_field(name="❌ Threads",
-                                        value=f"You have only {cpu} threads. Find a [better host](https://www.birdflop.com).")
+                                        value=f"You have only {cpu} threads. Try upgrading to a premium package")
             except KeyError as key:
                 logging.info("Missing: " + str(key))
 
@@ -341,6 +314,7 @@ class Timings(commands.Cog):
 def eval_field(embed_var, option, option_name, plugins, server_properties, bukkit, spigot, paper, tuinity, purpur):
     dict_of_vars = {"plugins": plugins, "server_properties": server_properties, "bukkit": bukkit, "spigot": spigot,
                     "paper": paper, "tuinity": tuinity, "purpur": purpur}
+
     try:
         for option_data in option:
             add_to_field = True

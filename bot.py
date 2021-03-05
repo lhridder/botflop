@@ -1,28 +1,35 @@
 import os
 import discord
-import json
 import logging
 import sys
-from discord.ext import commands, tasks
-from discord.ext.commands import has_permissions, MissingPermissions
-from dotenv import load_dotenv
-import aiohttp
-import mimetypes
-
-# import subprocess
+from discord.ext import commands
+from discord.ext.commands import has_permissions
+import configparser
 
 bot = commands.Bot(command_prefix=".", intents=discord.Intents.default(),
                    case_insensitive=True)
 
-load_dotenv()
-token = os.getenv('token')
-
 logging.basicConfig(filename='console.log',
                     level=logging.INFO,
                     format='[%(asctime)s %(levelname)s] %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S',
-                    )
+                    datefmt='%Y-%m-%d %H:%M:%S',)
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+
+try:
+    file = open("config.ini")
+    file.close()
+except IOError:
+    config = configparser.ConfigParser()
+    config['bot'] = {'token': ''}
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
+    print("Config created! stopping...")
+    sys.exit(0)
+print("Config exists. continuing...")
+
+config = configparser.ConfigParser()
+config.read("config.ini")
+token = config["bot"]["token"]
 
 
 @bot.event
@@ -32,35 +39,6 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    # Binflop
-    if len(message.attachments) > 0:
-        if not message.attachments[0].url.lower().endswith(('.html')):
-            file_type = mimetypes.guess_type(message.attachments[0].url)
-            if not file_type[0] == None:
-                try:
-                    file_type = file_type[0].split('/')[0]
-                except:
-                    logging.info(file_type + " failed while being parsed")
-            if message.attachments[0].url.lower().endswith(('.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf')) or file_type == 'text':
-                text = await discord.Attachment.read(message.attachments[0], use_cached=False)
-                text = text.decode('Latin-1')
-                text = "\n".join(text.splitlines())
-                truncated = False
-                if len(text) > 100000:
-                    text = text[:99999]
-                    truncated = True
-                async with aiohttp.ClientSession() as session:
-                    async with session.post('https://bin.birdflop.com/documents', data=text) as req:
-                        key = json.loads(await req.read())['key']
-                response = ""
-                response = response + "https://bin.birdflop.com/" + key
-                response = response + "\nRequested by " + message.author.mention
-                if truncated:
-                    response = response + "\n(file was truncated because it was too long.)"
-                embed_var = discord.Embed(title="Please use a paste service", color=0x1D83D4)
-                embed_var.description = response
-                await message.channel.send(embed=embed_var)
-                logging.info(f'File uploaded by {message.author} ({message.author.id}): https://bin.birdflop.com/{key}')
     timings = bot.get_cog('Timings')
     await timings.analyze_timings(message)
     await bot.process_commands(message)
@@ -69,11 +47,6 @@ async def on_message(message):
 async def ping(ctx):
     await ctx.send(f'Birdflop bot ping is {round(bot.latency * 1000)}ms')
 
-@bot.command()
-async def invite(ctx):
-    await ctx.send('Invite me with this link:\nhttps://discord.com/oauth2/authorize?client_id=787929894616825867&permissions=0&scope=bot')
-
-@bot.command(name="react", pass_context=True)
 @has_permissions(administrator=True)
 async def react(ctx, url, reaction):
     channel = await bot.fetch_channel(int(url.split("/")[5]))
@@ -87,5 +60,3 @@ for file_name in os.listdir('./cogs'):
 
 
 bot.run(token)
-
-# full name: message.author.name + "#" + str(message.author.discriminator) + " (" + str(message.author.id) + ")"

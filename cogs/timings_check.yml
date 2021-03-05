@@ -6,16 +6,6 @@
 # wake_up_inactive_flying_monsters_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["flying-monsters-every"])
 # wake_up_inactive_monsters_every = int(spigot["world-settings"]["default"]["entity-activation-range"]["wake-up-inactive"]["monsters-every"])
 version: "1.16.5"
-servers:
-- name: "Yatopia"
-  prefix: "❌"
-  value: |-
-    Yatopia is prone to bugs.
-    Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).
-- name: "Paper"
-  prefix: "❌"
-  value: |-
-    Purpur has more optimizations. Consider using [Purpur](https://ci.pl3x.net/job/Purpur/).
 plugins:
   paper:
     ClearLag:
@@ -71,11 +61,6 @@ plugins:
       prefix: "❌"
       value: |-
         Stacking mobs causes more lag.
-    FastAsyncWorldEdit:
-      prefix: "❌"
-      value: |-
-        FAWE has been known to cause issues.
-        Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).
     CMI:
       prefix: "❌"
       value: |-
