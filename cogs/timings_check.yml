@@ -139,7 +139,11 @@ config:
       - spigot["settings"]["bungeecord"] == "false"
       prefix: "❌"
       value: "Increase this in [server.properties](http://bit.ly/servprop). Recommended: 512."
-      value: "Increase this in [server.properties](http://bit.ly/servprop). Recommended: 512."
+    view-distance:
+      - expressions:
+          - int(server_properties["view-distance"]) >= 8
+        prefix: "❌"
+        value: "Decrease this in [server.properties](http://bit.ly/servprop). Recommended: 8."
   bukkit:
     chunk-gc.period-in-ticks:
     - expressions:
