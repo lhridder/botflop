@@ -2,6 +2,8 @@ import os
 import discord
 import logging
 import sys
+
+import requests
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 import configparser
@@ -42,10 +44,74 @@ async def on_message(message):
     timings = bot.get_cog('Timings')
     await timings.analyze_timings(message)
     await bot.process_commands(message)
+    msg = message.content
 
-@bot.command()
-async def ping(ctx):
-    await ctx.send(f'Birdflop bot ping is {round(bot.latency * 1000)}ms')
+    # Server status checker based on mcsrvstat.us api
+    if msg == "-online":
+        print('Message from {0.author}: {0.content}'.format(message))
+        await message.channel.send("Please give an ip to check (-online ip:port)")
+    if msg.startswith("-online "):
+        print('Message from {0.author}: {0.content}'.format(message))
+
+        arg = msg.replace("-online ", "")
+        r = requests.get("https://api.mcsrvstat.us/2/" + arg)
+        rjson = r.json()
+
+        if rjson["online"]:
+            embed = discord.Embed(title="Server online: " + arg, color=0x00FF00)
+
+            if len(rjson["motd"]["clean"]) > 1:
+                info = str(rjson["motd"]["clean"][0]) + "\n" + str(rjson["motd"]["clean"][1])
+            else:
+                info = str(rjson["motd"]["clean"][0])
+            embed.add_field(name='Motd', value=info, inline=False)
+
+            if "software" in rjson:
+                version = str(rjson["version"]) + " (" + str(rjson["software"]) + ")"
+            else:
+                version = str(rjson["version"]) + "\n"
+            embed.add_field(name='Version', value=version, inline=False)
+
+            count = str(rjson["players"]["online"]) + "/" + str(rjson["players"]["max"])
+            embed.add_field(name='Players', value=count, inline=False)
+
+        else:
+            embed = discord.Embed(title="Server offline: " + arg, color=0xFF0000)
+
+        embed.add_field(name='Ip', value=str(rjson["ip"]) + ":" + str(rjson["port"]), inline=False)
+
+        if rjson["debug"]["ping"]:
+            pingserver = ":white_check_mark:"
+        else:
+            pingserver = ":red_circle:"
+
+        if rjson["debug"]["query"]:
+            query = ":white_check_mark:"
+        else:
+            query = ":red_circle:"
+
+        if rjson["debug"]["srv"]:
+            srv = ":white_check_mark:"
+        else:
+            srv = ":red_circle:"
+
+        if "hostname" not in rjson:
+            debug = pingserver + " Ping" + "\n" \
+                    + query + " Query" + "\n" \
+                    + srv + " SRV"
+        else:
+            debug = pingserver + " Ping" + "\n" \
+                    + query + " Query" + "\n" \
+                    + srv + " SRV" + "\n" \
+                    + "Hostname: " + str(rjson["hostname"])
+
+        embed.add_field(name='Debug', value=debug, inline=False)
+
+        embed.set_footer(text="Data from mcsrvstat.us api",
+                         icon_url="https://feroxhosting.nl/img/fhlogosmall.png")
+        await message.channel.send(embed=embed)
+        print("Sent response in channel")
+
 
 @has_permissions(administrator=True)
 async def react(ctx, url, reaction):
