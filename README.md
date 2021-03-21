@@ -9,5 +9,6 @@ Analyze timings reports and recommend lagfixes.
 - Added .ini config for bot token
 - Removed advertisements
 - Changed thread warnings
+- Added mcsrvstat.us -online command
 
 _fork by lhridder for https://feroxhosting.nl_

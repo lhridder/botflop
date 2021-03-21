@@ -22,7 +22,7 @@ try:
     file.close()
 except IOError:
     config = configparser.ConfigParser()
-    config['bot'] = {'token': ''}
+    config['bot'] = {'token': '', 'apikey': ''}
     with open('config.ini', 'w') as configfile:
         config.write(configfile)
     print("Config created! stopping...")
@@ -32,6 +32,7 @@ print("Config exists. continuing...")
 config = configparser.ConfigParser()
 config.read("config.ini")
 token = config["bot"]["token"]
+apikey = config["bot"]["apikey"]
 
 
 @bot.event
@@ -105,6 +106,30 @@ async def on_message(message):
                     + srv + " SRV" + "\n" \
                     + "Hostname: " + str(rjson["hostname"])
 
+        embed.add_field(name='Debug', value=debug, inline=False)
+
+        embed.set_footer(text="Data from mcsrvstat.us api",
+                         icon_url="https://feroxhosting.nl/img/fhlogosmall.png")
+        await message.channel.send(embed=embed)
+        print("Sent response in channel")
+
+    # Server status checker based on mcsrvstat.us api
+    if msg == "-ipinfo":
+        print('Message from {0.author}: {0.content}'.format(message))
+        await message.channel.send("Please give an ip to check (-ipinfo (ip))")
+    if msg.startswith("-ipinfo "):
+        print('Message from {0.author}: {0.content}'.format(message))
+        arg = msg.replace("-ipinfo ", "")
+
+        if arg.contains(" "):
+            await message.channel.send("No spaces allowed")
+        else:
+            ips = arg.split(".")
+            r = requests.get("https://ipinfo.io/" + arg + "?token=" + token)
+            rjson = r.json()
+
+        embed = discord.Embed(title="Ip info: " + arg, color=0x00FF00)
+        embed.description
         embed.add_field(name='Debug', value=debug, inline=False)
 
         embed.set_footer(text="Data from mcsrvstat.us api",
