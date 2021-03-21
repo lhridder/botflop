@@ -10,5 +10,6 @@ Analyze timings reports and recommend lagfixes.
 - Removed advertisements
 - Changed thread warnings
 - Added mcsrvstat.us -online command
+- Added ipinfo.io -ipinfo command
 
 _fork by lhridder for https://feroxhosting.nl_

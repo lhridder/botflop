@@ -14,7 +14,7 @@ bot = commands.Bot(command_prefix=".", intents=discord.Intents.default(),
 logging.basicConfig(filename='console.log',
                     level=logging.INFO,
                     format='[%(asctime)s %(levelname)s] %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S',)
+                    datefmt='%Y-%m-%d %H:%M:%S', )
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 try:
@@ -39,6 +39,7 @@ apikey = config["bot"]["apikey"]
 async def on_ready():
     # Marks bot as running
     logging.info('I am running.')
+
 
 @bot.event
 async def on_message(message):
@@ -120,22 +121,28 @@ async def on_message(message):
     if msg.startswith("-ipinfo "):
         print('Message from {0.author}: {0.content}'.format(message))
         arg = msg.replace("-ipinfo ", "")
-
-        if arg.contains(" "):
+        if " " in arg:
             await message.channel.send("No spaces allowed")
         else:
-            ips = arg.split(".")
-            r = requests.get("https://ipinfo.io/" + arg + "?token=" + token)
+            r = requests.get("https://ipinfo.io/" + arg + "?token=" + apikey)
             rjson = r.json()
-
-        embed = discord.Embed(title="Ip info: " + arg, color=0x00FF00)
-        embed.description
-        embed.add_field(name='Debug', value=debug, inline=False)
-
-        embed.set_footer(text="Data from mcsrvstat.us api",
-                         icon_url="https://feroxhosting.nl/img/fhlogosmall.png")
-        await message.channel.send(embed=embed)
-        print("Sent response in channel")
+            if "status" in rjson:
+                await message.channel.send("404 error while consulting the API")
+            else:
+                embed = discord.Embed(title="Ip info", color=0x00FF00, description=rjson["ip"])
+                embed.add_field(name='Hostname', value=str(rjson["hostname"]), inline=False)
+                embed.add_field(name='Organization', value=str(rjson["org"]), inline=False)
+                loc = "City: " + str(rjson["city"]) + "\n" \
+                      + "Region: " + str(rjson["region"]) + "\n" \
+                      + "Country: " + str(rjson["country"]) + "\n" \
+                      + "Location: " + str(rjson["loc"]) + "\n" \
+                      + "Postal code: " + str(rjson["postal"]) + "\n" \
+                      + "Timezone: " + str(rjson["timezone"])
+                embed.add_field(name='Location', value=loc, inline=False)
+                embed.set_footer(text="Data from ipinfo.io api",
+                                 icon_url="https://feroxhosting.nl/img/fhlogosmall.png")
+                await message.channel.send(embed=embed)
+                print("Sent response in channel")
 
 
 @has_permissions(administrator=True)
@@ -145,9 +152,9 @@ async def react(ctx, url, reaction):
     await message.add_reaction(reaction)
     logging.info('reacted to ' + url + ' with ' + reaction)
 
+
 for file_name in os.listdir('./cogs'):
     if file_name.endswith('.py'):
         bot.load_extension(f'cogs.{file_name[:-3]}')
-
 
 bot.run(token)
