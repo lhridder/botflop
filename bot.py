@@ -109,8 +109,7 @@ async def on_message(message):
 
         embed.add_field(name='Debug', value=debug, inline=False)
 
-        embed.set_footer(text="Data from mcsrvstat.us api",
-                         icon_url="https://feroxhosting.nl/img/fhlogosmall.png")
+        embed.set_footer(text="lhridder/botflop - Data from mcsrvstat.us api")
         await message.channel.send(embed=embed)
         print("Sent response in channel")
 
@@ -139,8 +138,7 @@ async def on_message(message):
                       + "Postal code: " + str(rjson["postal"]) + "\n" \
                       + "Timezone: " + str(rjson["timezone"])
                 embed.add_field(name='Location', value=loc, inline=False)
-                embed.set_footer(text="Data from ipinfo.io api",
-                                 icon_url="https://feroxhosting.nl/img/fhlogosmall.png")
+                embed.set_footer(text="lhridder/botflop - Data from ipinfo.io api")
                 await message.channel.send(embed=embed)
                 print("Sent response in channel")
 
