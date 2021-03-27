@@ -77,7 +77,7 @@ class Util(commands.Cog):
 
         embed.add_field(name='Debug', value=debug, inline=False)
 
-        embed.set_footer(text="botflop - Data from mcsrvstat.us api")
+        embed.set_footer(text="gh:lhridder/botflop - Data from mcsrvstat.us api")
         await ctx.send(embed=embed)
         logging.info("Sent response in channel")
 
@@ -136,7 +136,7 @@ class Util(commands.Cog):
               + "Postal code: " + str(rjson["postal"]) + "\n" \
               + "Timezone: " + str(rjson["timezone"])
         embed.add_field(name='Location', value=loc, inline=False)
-        embed.set_footer(text="botflop - Data from ipinfo.io API")
+        embed.set_footer(text="gh:lhridder/botflop - Data from ipinfo.io API")
         await ctx.send(embed=embed)
         logging.info("Sent ipinfo response in channel")
 
@@ -219,7 +219,7 @@ class Util(commands.Cog):
             if result != "":
                 embed.add_field(name="_minecraft._tcp."+fqdn, value=result, inline=False)
         
-        embed.set_footer(text="botflop - Data from cloudflare-dns.com API")
+        embed.set_footer(text="gh:lhridder/botflop - Data from cloudflare-dns.com API")
         await ctx.send(embed=embed)
 
 
