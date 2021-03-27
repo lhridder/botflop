@@ -32,7 +32,7 @@ class Util(commands.Cog):
             return
             
         if isinstance(ctx, SlashContext):
-            await ctx.respond(False)
+            await ctx.defer(False)
 
         r = requests.get("https://api.mcsrvstat.us/2/" + server)
         rjson = r.json()
@@ -111,7 +111,7 @@ class Util(commands.Cog):
             return
 
         if isinstance(ctx, SlashContext):
-            await ctx.respond(False)
+            await ctx.defer(False)
             
         r = requests.get("https://ipinfo.io/" + ip + "?token=" + self.bot.ipinfo_apikey)
         rjson = r.json()
@@ -166,7 +166,7 @@ class Util(commands.Cog):
             return
             
         if isinstance(ctx, SlashContext):
-            await ctx.respond(False)
+            await ctx.defer(False)
         
         embed = discord.Embed(title=("" if record_type is None else "Specific ")+"DNS Lookup", color=0x00FF00)
         def dns_result(record_type, fqdn=fqdn):
