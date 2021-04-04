@@ -9,7 +9,7 @@ from discord.ext.commands import CommandNotFound
 from discord_slash import SlashCommand
 
 bot = commands.Bot(command_prefix="-", intents=discord.Intents.default(),
-                   case_insensitive=True, help_command=False)
+                   case_insensitive=True, help_command=None)
 slashbot = SlashCommand(bot, sync_commands=True)
 
 logging.basicConfig(filename='console.log',
