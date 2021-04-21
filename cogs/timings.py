@@ -132,7 +132,7 @@ class Timings(commands.Cog):
                         if request["maxplayers"] > 100:
                             if int(max_mem) < 4000:
                                 embed_var.add_field(name="❌ Low Memory",
-                                    value="Allocate at least 6-8GB of ram to your server if you are expecting above 50 players.")
+                                    value="Allocate at least 4-6GB of ram to your server if you are expecting above 50 players.")
                         index = 0
                         max_online_players = 0
                         while index < len(request["timingsMaster"]["data"]):
@@ -157,7 +157,7 @@ class Timings(commands.Cog):
                                 max_mem = max_mem.replace("M", "")
                                 max_mem = max_mem.replace("g", "000")
                                 max_mem = max_mem.replace("m", "")
-                        if int(max_mem) > 4000:
+                        if int(max_mem) >= 4000:
                             embed_var.add_field(name="❌ Aikar's Flags",
                                         value="Use [Aikar's flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).")
             except KeyError as key:
@@ -165,9 +165,12 @@ class Timings(commands.Cog):
 
             try:
                 cpu = int(request["timingsMaster"]["system"]["cpu"])
-                if cpu == 2:
+                if cpu <= 2:
                     embed_var.add_field(name="❌ Threads",
                                         value=f"You have only {cpu} threads. Try upgrading to a premium package")
+                if cpu > 8:
+                    embed_var.add_field(name="❌ Threads",
+                                        value=f"You have {cpu} threads. Having more slow threads is less important than having a couple fast ones")
             except KeyError as key:
                 logging.info("Missing: " + str(key))
 
@@ -211,8 +214,7 @@ class Timings(commands.Cog):
                             eval_field(embed_var, option, option_name, plugins, server_properties, bukkit,
                                        spigot, paper, tuinity, purpur)
             else:
-                embed_var.add_field(name="Error loading YAML file",
-                                    value=YAML_ERROR)
+                embed_var.add_field(name="Error loading YAML file", value=YAML_ERROR)
 
             try:
                 for plugin in plugins:
@@ -289,8 +291,7 @@ class Timings(commands.Cog):
 
         except ValueError as value_error:
             logging.info(value_error)
-            embed_var.add_field(name="❗ Value Error",
-                                value=value_error)
+            embed_var.add_field(name="❗ Value Error", value=value_error)
 
         if len(embed_var.fields) == 0:
             embed_var.add_field(name="✅ All good",
