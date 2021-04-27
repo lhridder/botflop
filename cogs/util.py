@@ -41,7 +41,10 @@ class Util(commands.Cog):
         if rjson["online"]:
             embed = discord.Embed(title="Server online: " + server, color=0x00FF00)
 
-            info = str(rjson["motd"]["clean"][0])
+            if str(rjson["motd"]["clean"][0]) == "":
+                info = "none"
+            else:
+                info = str(rjson["motd"]["clean"][0])
             if len(rjson["motd"]["clean"]) > 1:
                 info += "\n" + str(rjson["motd"]["clean"][1])
             embed.add_field(name='Motd', value=info, inline=False)
