@@ -129,7 +129,7 @@ class Timings(commands.Cog):
                                 max_mem = max_mem.replace("M", "")
                                 max_mem = max_mem.replace("g", "000")
                                 max_mem = max_mem.replace("m", "")
-                        if request["maxplayers"] > 100:
+                        if int(request["maxplayers"]) > 100:
                             if int(max_mem) < 4000:
                                 embed_var.add_field(name="❌ Low Memory",
                                     value="Allocate at least 4-6GB of ram to your server if you are expecting above 50 players.")
