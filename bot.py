@@ -56,7 +56,6 @@ async def on_command_error(ctx, error):
     raise error
 
 
-
 for file_name in os.listdir('./cogs'):
     if file_name.endswith('.py'):
         bot.load_extension(f'cogs.{file_name[:-3]}')

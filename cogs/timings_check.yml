@@ -373,6 +373,7 @@ config:
     armor-stands-tick:
     - expressions:
       - paper["world-settings"]["default"]["armor-stands-tick"] == "true"
+      - 'purpur is not None'
       - '"PetBlocks" not in plugins'
       - '"BlockBalls" not in plugins'
       - '"ArmorStandTools" not in plugins'
@@ -445,3 +446,9 @@ config:
       - purpur["world-settings"]["default"]["gameplay-mechanics"]["player"]["teleport-if-outside-border"] == "false"
       prefix: "❌"
       value: "Enable this in **purpur.yml**."
+    gameplay-mechanics.armorstand.can-move-in-water-over-fence:
+    - expressions:
+      - purpur["world-settings"]["default"]["gameplay-mechanics"]["armorstand"]["can-movement-tick"] == "true"
+      - purpur["world-settings"]["default"]["gameplay-mechanics"]["armorstand"]["can-move-in-water-over-fence"] == "true"
+      prefix: "❌"
+      value: "Disable this in **purpur.yml**."
