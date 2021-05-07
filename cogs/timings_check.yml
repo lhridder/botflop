@@ -448,6 +448,7 @@ config:
       value: "Enable this in **purpur.yml**."
     gameplay-mechanics.armorstand.can-move-in-water-over-fence:
     - expressions:
+      - paper["world-settings"]["default"]["armor-stands-tick"] == "true"
       - purpur["world-settings"]["default"]["gameplay-mechanics"]["armorstand"]["can-movement-tick"] == "true"
       - purpur["world-settings"]["default"]["gameplay-mechanics"]["armorstand"]["can-move-in-water-over-fence"] == "true"
       prefix: "❌"
