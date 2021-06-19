@@ -14,9 +14,6 @@ with open("cogs/timings_check.yml", 'r', encoding="utf8") as stream:
         logging.info(exc)
         YAML_ERROR = exc
 
-VERSION_REGEX = re.compile(r"\d+\.\d+\.\d+")
-
-
 class Timings(commands.Cog):
 
     def __init__(self, bot):
@@ -69,27 +66,6 @@ class Timings(commands.Cog):
             return
 
         try:
-            try:
-                version = request["timingsMaster"]["version"] if "version" in request["timingsMaster"] else None
-                if "version" in TIMINGS_CHECK and version:
-                    version_result = VERSION_REGEX.search(version)
-                    version_result = version_result.group() if version_result else None
-                    if version_result:
-                        if compare_versions(version_result, TIMINGS_CHECK["version"]) == -1:
-                            version = version.replace("git-", "").replace("MC: ", "")
-                            embed_var.add_field(name="❌ Outdated",
-                                                value=f'You are using `{version}`. Update to `{TIMINGS_CHECK["version"]}`.')
-                    else:
-                        embed_var.add_field(name="❗ Value Error",
-                                            value=f'Could not locate version from `{version}`')
-                if "servers" in TIMINGS_CHECK:
-                    for server in TIMINGS_CHECK["servers"]:
-                        if server["name"] in version:
-                            embed_var.add_field(**create_field(server))
-                            break
-            except KeyError as key:
-                logging.info("Missing: " + str(key))
-
             try:
                 timing_cost = int(request["timingsMaster"]["system"]["timingcost"])
                 if timing_cost > 300:
