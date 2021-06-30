@@ -181,12 +181,6 @@ config:
       prefix: "❌"
       value: "Decrease this in **bukkit.yml**.\nRecommended: 5."
   spigot:
-    view-distance:
-    - expressions:
-      - int(server_properties["view-distance"]) >= 10
-      - spigot["world-settings"]["default"]["view-distance"] == "default"
-      prefix: "❌"
-      value: "Decrease this from default (10) in **spigot.yml**.\nRecommended: 4."
     entity-activation-range.animals:
     - expressions:
       - int(spigot["world-settings"]["default"]["entity-activation-range"]["animals"]) >= 32
